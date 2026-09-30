@@ -1,0 +1,24 @@
+<div class="customer-container">
+  <h2>Customer Management</h2>
+  
+  <div *ngIf="expiringSubscriptions.length > 0" class="subscription-expiry-alert">
+    <strong>Warning:</strong> {{ expiringSubscriptions.length }} subscriptions are expiring soon!
+  </div>
+
+  <table class="customer-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Subscription Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let customer of customers">
+        <td>{{ customer.name }}</td>
+        <td>{{ customer.email }}</td>
+        <td>{{ customer.subscriptionStatus }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

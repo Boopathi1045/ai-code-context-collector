@@ -1,0 +1,210 @@
+{
+  "name": "ai-code-context-collector",
+  "displayName": "AI Code Context Collector",
+  "description": "Local-first code context extractor for web-based AI assistants (ChatGPT, Claude, Gemini, Copilot).",
+  "version": "1.0.0",
+  "publisher": "boopathi-dev",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/local-ai-tools/ai-code-context-collector"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "context",
+    "ollama",
+    "chatgpt",
+    "claude",
+    "copilot",
+    "angular",
+    "express",
+    "typescript"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onCommand:aiCodeContextCollector.createTaskContext",
+    "onCommand:aiCodeContextCollector.selectFilesContext",
+    "onCommand:aiCodeContextCollector.createProjectContext",
+    "onCommand:aiCodeContextCollector.showRelatedFiles",
+    "onCommand:aiCodeContextCollector.openLastContext",
+    "onCommand:aiCodeContextCollector.openAllGeneratedFiles",
+    "onCommand:aiCodeContextCollector.addSelectionToContext",
+    "onView:aiCodeContextCollector.sidebarView"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ai-context-collector",
+          "title": "AI Context Collector",
+          "icon": "resources/activity-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "ai-context-collector": [
+        {
+          "type": "webview",
+          "id": "aiCodeContextCollector.sidebarView",
+          "name": "Context Collector Hub"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "aiCodeContextCollector.createTaskContext",
+        "title": "AI Code Context Collector: Create Task Context"
+      },
+      {
+        "command": "aiCodeContextCollector.selectFilesContext",
+        "title": "AI Code Context Collector: Choose Files & Generate Context"
+      },
+      {
+        "command": "aiCodeContextCollector.createProjectContext",
+        "title": "AI Code Context Collector: Create Entire Project Context"
+      },
+      {
+        "command": "aiCodeContextCollector.showRelatedFiles",
+        "title": "AI Code Context Collector: Show Related Files"
+      },
+      {
+        "command": "aiCodeContextCollector.openLastContext",
+        "title": "AI Code Context Collector: Open Last Context"
+      },
+      {
+        "command": "aiCodeContextCollector.openAllGeneratedFiles",
+        "title": "AI Code Context Collector: View All Generated MD Files"
+      },
+      {
+        "command": "aiCodeContextCollector.addSelectionToContext",
+        "title": "AI Code Context Collector: Add Selection to Context"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "aiCodeContextCollector.addSelectionToContext",
+          "when": "editorHasSelection",
+          "group": "aiContext@1"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "AI Code Context Collector",
+      "properties": {
+        "aiCodeContextCollector.storageDirectory": {
+          "type": "string",
+          "default": "",
+          "description": "Custom directory path (relative to workspace root or absolute) to store generated Markdown files. Leave empty to use workspace root + .ai-context/."
+        },
+        "aiCodeContextCollector.ollama.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable optional local Ollama LLM assistance for candidate relevance ranking."
+        },
+        "aiCodeContextCollector.ollama.endpoint": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Local Ollama server API endpoint (default: http://localhost:11434)."
+        },
+        "aiCodeContextCollector.ollama.model": {
+          "type": "string",
+          "default": "qwen2.5-coder:1.5b",
+          "description": "Local Ollama model name (e.g., qwen2.5-coder:1.5b, llama3.2:1b)."
+        },
+        "aiCodeContextCollector.ollama.timeoutMs": {
+          "type": "number",
+          "default": 30000,
+          "description": "Timeout in milliseconds for Ollama requests before falling back to static analysis."
+        },
+        "aiCodeContextCollector.maxRelationshipDepth": {
+          "type": "number",
+          "default": 3,
+          "description": "Maximum depth for traversing code relationships (Route -> Controller -> Service -> Model)."
+        },
+        "aiCodeContextCollector.maxCandidateFiles": {
+          "type": "number",
+          "default": 25,
+          "description": "Maximum number of candidate files to evaluate with Ollama or rank in candidate selection."
+        },
+        "aiCodeContextCollector.maxFiles": {
+          "type": "number",
+          "default": 30,
+          "description": "Maximum total files to include in generated Markdown context."
+        },
+        "aiCodeContextCollector.maxContextSizeKB": {
+          "type": "number",
+          "default": 500,
+          "description": "Maximum context file size in KB before trimming lower-confidence candidates."
+        },
+        "aiCodeContextCollector.maxFileSizeKB": {
+          "type": "number",
+          "default": 500,
+          "description": "Skip scanning individual source files larger than this threshold."
+        },
+        "aiCodeContextCollector.includeProjectStructure": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include filtered project directory tree in the generated context Markdown."
+        },
+        "aiCodeContextCollector.excludePatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "node_modules",
+            ".git",
+            "dist",
+            "build",
+            "coverage",
+            ".cache",
+            ".angular",
+            ".next",
+            ".vscode",
+            ".idea",
+            "vendor",
+            "target",
+            "bin",
+            "obj",
+            ".env",
+            ".env.*",
+            "*.pem",
+            "*.key",
+            "*.p12",
+            "*.pfx",
+            "package-lock.json",
+            "yarn.lock",
+            "pnpm-lock.yaml"
+          ],
+          "description": "Glob patterns and directory names to exclude from analysis and context collection."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "mocha -r ts-node/register \"test/**/*.test.ts\""
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.24.0",
+    "chai": "^4.4.1",
+    "mocha": "^10.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
