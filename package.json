@@ -7,7 +7,7 @@
   "icon": "icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/local-ai-tools/ai-code-context-collector"
+    "url": "https://github.com/Boopathi1045/ai-code-context-collector"
   },
   "engines": {
     "vscode": "^1.85.0"
